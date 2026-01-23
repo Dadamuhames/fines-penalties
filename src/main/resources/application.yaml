@@ -1,0 +1,94 @@
+spring:
+  application:
+    name: finespenalties
+
+  security:
+    cors:
+      allowed-origins: "http://localhost:3000,"
+      allowed-methods: "*"
+      allowed-headers: "*"
+
+  # JPA configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fines_penalties_db
+    username: mark
+    password: root_pass
+    driver-class-name: org.postgresql.Driver
+    tomcat:
+      test-on-borrow: true
+      validation-query: SELECT 1
+    hikari:
+      maximum-pool-size: 16
+      minimum-idle: 8
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 10
+        order_updates: true
+        order_inserts: true
+        format_sql: true
+        generate_statistics: true
+        default_schema: postgres
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      auto-offset-reset: earliest
+
+    producer:
+      bootstrap-servers: localhost:9092
+      acks: -1
+
+  # Flyway configuration
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    validate-on-migrate: true
+    baseline-version: 0
+    schemas: postgres
+
+# Tomcat configuration
+server:
+  port: 8080
+  tomcat:
+    connection-timeout: 10000
+    accept-count: 100
+    max-connections: 2000
+    keep-alive-timeout: 60000
+    threads:
+      max: 1000
+      min-spare: 200
+
+  compression:
+    enabled: true
+    mime-types: application/json
+
+logging:
+  config: classpath:log4j2.yml
+
+
+jwt:
+  secret-key: "4b86333279995c2cf2a0595e4deead09528d2c81050021b1c76a52b95ac533f6"
+  access-ttl: 900000
+  refresh-ttl: 900000
+
+services:
+  notification:
+    url: "http://localhost:8060/api/v1/notifications"
+    login: ""
+    password: ""
+
+  gcp:
+    url: "http://localhost:8070/api/v1/gcp"
+    login: ""
+    password: ""
