@@ -1,7 +1,9 @@
 package com.uzumtech.finespenalties.service.impl;
 
+import com.uzumtech.finespenalties.constant.enums.ErrorCode;
 import com.uzumtech.finespenalties.dto.response.CodeArticleResponse;
 import com.uzumtech.finespenalties.entity.CodeArticleEntity;
+import com.uzumtech.finespenalties.exception.CodeArticleIdInvalidException;
 import com.uzumtech.finespenalties.mapper.CodeArticleMapper;
 import com.uzumtech.finespenalties.repository.CodeArticleRepository;
 import com.uzumtech.finespenalties.service.intr.CodeArticleService;
@@ -24,5 +26,10 @@ public class CodeArticleServiceImpl implements CodeArticleService {
         Page<CodeArticleEntity> codeArticles = codeArticleRepository.findAllWithSearch(search, pageable);
 
         return codeArticles.map(codeArticleMapper::entityToResponse);
+    }
+
+
+    public CodeArticleEntity findByIdOrThrowBadRequestException(Long codeArticleId) {
+        return codeArticleRepository.findById(codeArticleId).orElseThrow(() -> new CodeArticleIdInvalidException(ErrorCode.CODE_ARTICLE_NOT_FOUND));
     }
 }

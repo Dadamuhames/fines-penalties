@@ -4,12 +4,12 @@ services:
     container_name: postgres_db
 
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
     environment:
       POSTGRES_DB: "fines_penalties_db"
-      POSTGRES_USER: "mark"
-      POSTGRES_PASSWORD: "root_pass"
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "root_password"
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -51,16 +51,21 @@ services:
     container_name: kafka-broker
     hostname: kafka
     ports:
-      - "9092:9092"
+      - "9093:9093"
+
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:29093,BROKER://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka:29092,PLAINTEXT_HOST://localhost:9092
+
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:9094, INTERNAL://0.0.0.0:9092, EXTERNAL://0.0.0.0:9093
+
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092, EXTERNAL://localhost:9093
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:29093"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9094"
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
@@ -71,13 +76,55 @@ services:
     depends_on:
       - kafka
     ports:
-      - "7777:8080"
+      - "7778:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: local-kafka-kraft
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29093
       DYNAMIC_MODE: "true"
       AUTH_TYPE: disabled
     restart: unless-stopped
+
+  app:
+    build: .
+    container_name: fines-penalties
+    depends_on:
+      - db
+      - kafka
+      - kafka-ui
+      - redis
+      - redis-commander
+    ports:
+      - "7080:7080"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/fines_penalties_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root_password
+
+      PORT: 7080
+
+      NOTIFICATION_URL: "http://217.29.121.129/notification_api/api/notifications"
+      NOTIFICATION_LOGIN: ${NOTIFICATION_LOGIN}
+      NOTIFICATION_PASSWORD: ${NOTIFICATION_PASSWORD}
+
+      GCP_URL: "http://217.29.121.129/gcp_api/api/gcp"
+
+      COURT_URL: "http://192.168.100.160:7070/api/v1/court/external-service"
+      COURT_LOGIN: ${COURT_LOGIN}
+      COURT_PASSWORD: ${COURT_PASSWORD}
+      COURT_WEBHOOK_SECRET: ${COURT_WEBHOOK_SECRET}
+
+      REDIS_HOST: redis
+
+      JWT_SECRET: ${JWT_SECRET}
+
+      SHOW_SQL: true
+
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+
+    restart: unless-stopped
+
 
 volumes:
   postgres_data: { }

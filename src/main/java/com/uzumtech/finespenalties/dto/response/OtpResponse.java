@@ -1,4 +1,4 @@
 package com.uzumtech.finespenalties.dto.response;
 
-public record OtpResponse(long cooldownSeconds) {
+public record OtpResponse(String phone, long cooldownSeconds) {
 }

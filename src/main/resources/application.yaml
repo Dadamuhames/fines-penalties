@@ -10,9 +10,9 @@ spring:
 
   # JPA configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/fines_penalties_db
-    username: mark
-    password: root_pass
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     tomcat:
       test-on-borrow: true
@@ -42,11 +42,10 @@ spring:
 
   kafka:
     consumer:
-      bootstrap-servers: localhost:9092
-      auto-offset-reset: earliest
+      bootstrap-servers: kafka:9092
 
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: kafka:9092
       acks: -1
 
   # Flyway configuration
@@ -57,9 +56,26 @@ spring:
     baseline-version: 0
     schemas: postgres
 
+  data:
+    redis:
+      host: ${REDIS_HOST:0.0.0.0}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:secure_redis_pass}
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_LETTUCE_MAX_ACTIVE:32}
+          max-idle: ${REDIS_POOL_LETTUCE_MAX_IDLE:16}
+          min-idle: ${REDIS_POOL_LETTUCE_MIN_IDLE:8}
+          max-wait: ${REDIS_POOL_LETTUCE_MAX_WAIT:2000}
+      database: 0
+      timeout: ${REDIS_CONNECT_TIMEOUT:2000}
+      default-ttl: ${REDIS_DEFAULT_TTL:30000}
+      order-ttl: ${REDIS_ORDER_TTL:5000}
+      merchant-ttl: ${REDIS_MERCHANT_TTL:5000}
+
 # Tomcat configuration
 server:
-  port: 8080
+  port: ${PORT}
   tomcat:
     connection-timeout: 10000
     accept-count: 100
@@ -69,26 +85,35 @@ server:
       max: 1000
       min-spare: 200
 
-  compression:
-    enabled: true
-    mime-types: application/json
-
 logging:
   config: classpath:log4j2.yml
 
+  level:
+    org:
+      apache:
+        kafka: WARN
+      springframework:
+        kafka: WARN
+
 
 jwt:
-  secret-key: "4b86333279995c2cf2a0595e4deead09528d2c81050021b1c76a52b95ac533f6"
+  secret-key: ${JWT_SECRET}
   access-ttl: 900000
-  refresh-ttl: 900000
+  refresh-ttl: 1500000
 
 services:
   notification:
-    url: "http://localhost:8060/api/v1/notifications"
+    url: ${NOTIFICATION_URL}
+    login: ${NOTIFICATION_LOGIN}
+    password: ${NOTIFICATION_PASSWORD}
+
+  gcp:
+    url: ${GCP_URL}
     login: ""
     password: ""
 
-  gcp:
-    url: "http://localhost:8070/api/v1/gcp"
-    login: ""
-    password: ""
+  court:
+    baseUrl: ${COURT_URL}
+    login: ${COURT_LOGIN}
+    password: ${COURT_PASSWORD}
+    webhookSecret: ${COURT_WEBHOOK_SECRET}

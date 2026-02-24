@@ -7,7 +7,7 @@ import com.uzumtech.finespenalties.constant.enums.ErrorType;
 import com.uzumtech.finespenalties.constant.enums.Role;
 import com.uzumtech.finespenalties.dto.response.error.ErrorResponse;
 import com.uzumtech.finespenalties.exception.JwtMalformedException;
-import com.uzumtech.finespenalties.service.impl.auth.token.JwtService;
+import com.uzumtech.finespenalties.service.intr.token.JwtService;
 import com.uzumtech.finespenalties.service.impl.auth.userdetails.UserDetailDispatcher;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

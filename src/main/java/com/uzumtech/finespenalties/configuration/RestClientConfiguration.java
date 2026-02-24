@@ -1,7 +1,8 @@
 package com.uzumtech.finespenalties.configuration;
 
-import com.uzumtech.finespenalties.configuration.property.GcpServiceProperties;
-import com.uzumtech.finespenalties.configuration.property.NotificationServiceProperties;
+import com.uzumtech.finespenalties.configuration.property.service.CourtProperties;
+import com.uzumtech.finespenalties.configuration.property.service.GcpServiceProperties;
+import com.uzumtech.finespenalties.configuration.property.service.NotificationServiceProperties;
 import com.uzumtech.finespenalties.handler.RestClientExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class RestClientConfiguration {
     private final NotificationServiceProperties notificationServiceProperties;
+    private final CourtProperties courtProperties;
     private final GcpServiceProperties gcpServiceProperties;
 
     @Bean(name = "notificationRestClient")
@@ -38,20 +40,18 @@ public class RestClientConfiguration {
 
     @Bean(name = "gcpRestClient")
     public RestClient gcpRestClient(RestClient.Builder builder) {
-        String authToken = getGcpAuthToken();
-
         return builder.requestFactory(clientHttpRequestFactory())
             .defaultStatusHandler(new RestClientExceptionHandler())
             .baseUrl(gcpServiceProperties.getUrl())
-            .defaultHeader("Authorization", String.format("Basic %s", authToken))
             .build();
     }
 
-
-    private String getGcpAuthToken() {
-        String authTokenRaw = String.format("%s:%s", gcpServiceProperties.getLogin(), gcpServiceProperties.getPassword());
-
-        return Base64.getEncoder().encodeToString(authTokenRaw.getBytes());
+    @Bean(name = "courtRestClient")
+    public RestClient courtRestClient(RestClient.Builder builder) {
+        return builder.requestFactory(clientHttpRequestFactory())
+            .defaultStatusHandler(new RestClientExceptionHandler())
+            .baseUrl(courtProperties.getBaseUrl())
+            .build();
     }
 
     @Bean

@@ -20,8 +20,9 @@ public enum ErrorCode {
     USER_INVALID_CODE(10012, "User authentication invalid"),
     JWT_INVALID_CODE(10013, "JWT invalid"),
     REFRESH_TOKEN_INVALID_CODE(10014, "Refresh token invalid"),
-    LOGIN_INVALID_CODE(10015, "Login invalid"),
+    LOGIN_INVALID_CODE(10015, "Login invalid. Login using PINFL and OTP"),
     PASSWORD_INVALID_CODE(10016, "Password invalid"),
+    PASSWORD_NOT_EXISTS_CODE(10116, "Password is not set for user. User OTP to login"),
     OTP_EXPIRED_CODE(10017, "OTP expired or invalid"),
 
     OTP_REQUEST_LOCKED_CODE(10018, "OTP request locked. Wait and try again"),
@@ -30,11 +31,18 @@ public enum ErrorCode {
 
     HTTP_CLIENT_ERROR_CODE(14000, "Http Client error code"),
     HTTP_SERVER_ERROR_CODE(15000, "Http Server error code"),
-    NOTIFICATION_REQUEST_INVALID_CODE(16000, "Request to notification service invalid"),
 
-    LOGIN_OR_TAX_NUMBER_NOT_UNIQUE(12000, "login or taxNumber already in use"),
+    OFFENSE_ID_INVALID_CODE(10700, "offenseId invalid in a kafka event"),
+    COURT_REQUEST_INVALID_CODE(10710, "HTTP request to court invalid"),
+    COURT_SERVICE_UNAVAILABLE_CODE(10720, "Court service unavailable"),
+    OFFENSE_NOT_FOUND_CODE(10730, "Offense not found"),
+    COURT_AUTH_FAILED_CODE(10740, "Court auth failed"),
+    COURT_WEBHOOK_SECRET_INVALID_CODE(10750, "Court webhook secret invalid"),
 
-    EVENT_PUBLISHER_NOT_IMPLEMENTED(13000, "Event publisher not implemented");
+    CODE_ARTICLE_NOT_FOUND(18000, "Code article not found"),
+
+    NOTIFICATION_ID_INVALID_CODE(10900, "Notification id invalid"),
+    NOTIFICATION_REQUEST_INVALID_CODE(10910, "Request to notification service invalid");
 
     final int code;
     final String message;

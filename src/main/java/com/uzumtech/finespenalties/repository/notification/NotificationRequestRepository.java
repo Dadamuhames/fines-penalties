@@ -28,9 +28,8 @@ public interface NotificationRequestRepository extends JpaRepository<Notificatio
     void markAsDelivered(@Param("requestId") UUID requestId, @Param("notificationServiceId") Long notificationServiceId);
 
 
-    @Modifying
-    @Query("update NotificationRequestEntity n SET n.requestStatus = 'PROCESSING' " +
+    @Query("SELECT COUNT(n.id) > 0 FROM NotificationRequestEntity n " +
         "WHERE n.requestId = :requestId AND (n.requestStatus = 'NEW' OR n.requestStatus = 'SENT_TO_RETRY') ")
-    int claimForProcessing(@Param("requestId") UUID requestId);
+    boolean isAvailableForProcessing(@Param("requestId") UUID requestId);
 
 }

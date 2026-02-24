@@ -1,7 +1,7 @@
 package com.uzumtech.finespenalties.configuration;
 
 import com.uzumtech.finespenalties.constant.enums.Role;
-import com.uzumtech.finespenalties.service.intr.CustomUserDetailsService;
+import com.uzumtech.finespenalties.service.intr.user.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

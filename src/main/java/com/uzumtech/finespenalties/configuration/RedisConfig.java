@@ -1,39 +1,60 @@
 package com.uzumtech.finespenalties.configuration;
 
+import com.uzumtech.finespenalties.configuration.property.RedisProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.time.Duration;
 
 @Configuration
 @EnableRedisRepositories
+@RequiredArgsConstructor
 public class RedisConfig {
 
-  @Bean
-  public RedisConnectionFactory connectionFactory() {
-    return new LettuceConnectionFactory();
-  }
+    private final RedisProperties props;
 
-  @Bean
-  public RedisTemplate<String, Object> redisTemplate(
-      RedisConnectionFactory redisConnectionFactory) {
-    RedisTemplate<String, Object> template = new RedisTemplate<>();
-    template.setConnectionFactory(redisConnectionFactory);
+    @Bean
+    public LettuceConnectionFactory redisConnectionFactory() {
+        var configuration = new RedisStandaloneConfiguration();
+        configuration.setHostName(props.getHost());
+        configuration.setPort(props.getPort());
+        configuration.setPassword(props.getPassword());
+        configuration.setDatabase(props.getDatabase());
 
-    Jackson2JsonRedisSerializer<Object> serializer =
-        new Jackson2JsonRedisSerializer<>(Object.class);
+        var lettuceClientConfiguration = LettuceClientConfiguration
+            .builder()
+            .commandTimeout(Duration.ofMillis(props.getTimeout()))
+            .shutdownTimeout(Duration.ofMillis(props.getShutdownTimeout()))
+            .build();
 
-    template.setDefaultSerializer(serializer);
-    template.setKeySerializer(new StringRedisSerializer());
-    template.setValueSerializer(serializer);
-    template.setHashKeySerializer(new StringRedisSerializer());
-    template.setHashValueSerializer(serializer);
+        return new LettuceConnectionFactory(configuration, lettuceClientConfiguration);
+    }
 
-    template.afterPropertiesSet();
-    return template;
-  }
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(
+        RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+
+        JacksonJsonRedisSerializer<Object> serializer =
+            new JacksonJsonRedisSerializer<>(Object.class);
+
+        template.setDefaultSerializer(serializer);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(serializer);
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(serializer);
+
+        template.afterPropertiesSet();
+        return template;
+    }
 }

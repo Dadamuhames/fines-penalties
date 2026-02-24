@@ -3,7 +3,7 @@ package com.uzumtech.finespenalties.service.impl.auth.userdetails;
 import com.uzumtech.finespenalties.constant.enums.ErrorCode;
 import com.uzumtech.finespenalties.constant.enums.Role;
 import com.uzumtech.finespenalties.exception.RoleNotSupportedException;
-import com.uzumtech.finespenalties.service.intr.CustomUserDetailsService;
+import com.uzumtech.finespenalties.service.intr.user.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

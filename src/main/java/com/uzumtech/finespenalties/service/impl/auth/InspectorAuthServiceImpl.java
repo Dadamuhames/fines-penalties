@@ -9,11 +9,10 @@ import com.uzumtech.finespenalties.exception.InspectorNotFoundException;
 import com.uzumtech.finespenalties.exception.PasswordInvalidException;
 import com.uzumtech.finespenalties.repository.InspectorRepository;
 import com.uzumtech.finespenalties.service.intr.InspectorAuthService;
-import com.uzumtech.finespenalties.service.intr.TokenService;
+import com.uzumtech.finespenalties.service.intr.token.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +21,6 @@ public class InspectorAuthServiceImpl implements InspectorAuthService {
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional(readOnly = true)
     public TokenResponse login(final InspectorLoginRequest request) {
         InspectorEntity agency = inspectorRepository.findByPersonnelNumber(request.personnelNumber()).orElseThrow(() -> new InspectorNotFoundException(ErrorCode.LOGIN_INVALID_CODE));
 

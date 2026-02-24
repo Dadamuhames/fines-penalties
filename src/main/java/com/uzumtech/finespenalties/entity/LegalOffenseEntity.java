@@ -1,6 +1,6 @@
 package com.uzumtech.finespenalties.entity;
 
-import com.uzumtech.finespenalties.constant.enums.OffenceStatus;
+import com.uzumtech.finespenalties.constant.enums.OffenseStatus;
 import com.uzumtech.finespenalties.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,22 +19,20 @@ import java.time.OffsetDateTime;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "legal_offenses", indexes = {@Index(columnList = "id"), @Index(columnList = "offenderPinfl"), @Index(columnList = "id, offenderPinfl")})
+@Table(name = "legal_offenses", indexes = {@Index(columnList = "inspector_id"), @Index(columnList = "user_id"), @Index(columnList = "id, user_id"), @Index(columnList = "id, status")})
 public class LegalOffenseEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inspector_id", updatable = false, foreignKey = @ForeignKey(name = "fk_inspector"))
+    @JoinColumn(name = "inspector_id", updatable = false, foreignKey = @ForeignKey(name = "fk_inspector"), nullable = false)
     private InspectorEntity inspector;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "code_article_id", foreignKey = @ForeignKey(name = "fk_codeArticle"))
+    @JoinColumn(name = "code_article_id", foreignKey = @ForeignKey(name = "fk_codeArticle"), nullable = false)
     private CodeArticleEntity codeArticle;
 
-    @Column(nullable = false, length = 14)
-    private String offenderPinfl;
-
-    @Column(nullable = false)
-    private String offenderFullName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", updatable = false, foreignKey = @ForeignKey(name = "fk_user"), nullable = false)
+    private UserEntity user;
 
     @Column(nullable = false)
     private String offenseLocation;
@@ -47,11 +45,19 @@ public class LegalOffenseEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "status")
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    private OffenceStatus status;
+    private OffenseStatus status;
 
     @Column(nullable = false, unique = true)
     private String protocolNumber;
 
+    // external values
+    private Long courtOffenseId;
+
+    private String courtCaseNumber;
+
     @Column(nullable = false)
     private OffsetDateTime offenseDateTime;
+
+    @OneToOne(mappedBy = "offense", fetch = FetchType.LAZY)
+    private PenaltyEntity penalty;
 }

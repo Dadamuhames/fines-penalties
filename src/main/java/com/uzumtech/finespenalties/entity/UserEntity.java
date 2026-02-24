@@ -19,14 +19,17 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users", indexes = {@Index(columnList = "phone")})
+@Table(name = "users", indexes = {@Index(columnList = "phone"), @Index(columnList = "pinfl")})
 public class UserEntity extends BaseDeactivatableEntity implements CustomUserDetails {
 
     @Column(nullable = false)
     private String fullName;
 
     @Column(nullable = false)
-    private LocalDate dateOfBirth;
+    private Integer age;
+
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false, unique = true)
     private String phone;
@@ -34,7 +37,6 @@ public class UserEntity extends BaseDeactivatableEntity implements CustomUserDet
     @Column(nullable = false, unique = true, length = 14)
     private String pinfl;
 
-    @Column(nullable = false)
     private String password;
 
     @Override

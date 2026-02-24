@@ -8,6 +8,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ import org.hibernate.type.SqlTypes;
 @Table(name = "notification_callbacks")
 public class NotificationCallbackEntity extends BaseEntity {
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "notification_request_id", nullable = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     private NotificationRequestEntity notificationRequest;

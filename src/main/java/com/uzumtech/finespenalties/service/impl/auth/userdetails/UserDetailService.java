@@ -4,7 +4,7 @@ import com.uzumtech.finespenalties.constant.enums.ErrorCode;
 import com.uzumtech.finespenalties.constant.enums.Role;
 import com.uzumtech.finespenalties.exception.UserNotFoundException;
 import com.uzumtech.finespenalties.repository.UserRepository;
-import com.uzumtech.finespenalties.service.intr.CustomUserDetailsService;
+import com.uzumtech.finespenalties.service.intr.user.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

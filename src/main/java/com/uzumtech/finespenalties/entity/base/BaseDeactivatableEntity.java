@@ -34,14 +34,14 @@ public class BaseDeactivatableEntity {
     Long id;
 
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     OffsetDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(insertable = false)
+    @Column(insertable = false, nullable = false)
     OffsetDateTime updatedAt;
 
     @Builder.Default
-    @Column(name = "is_active")
+    @Column(name = "is_active", nullable = false)
     boolean isActive = true;
 }

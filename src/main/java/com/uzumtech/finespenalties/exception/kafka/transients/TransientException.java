@@ -16,4 +16,8 @@ public class TransientException extends ApplicationException {
         super(code, message, errorType, status);
     }
 
+    public TransientException(ErrorCode errorCode, Exception ex) {
+        super(errorCode.getCode(), errorCode.getMessage(), ErrorType.INTERNAL, null);
+    }
+
 }

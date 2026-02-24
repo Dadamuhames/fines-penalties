@@ -41,14 +41,17 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(
                 auth ->
                     auth.requestMatchers(
-                            "/api/v1/webhook/telegram",
-                            "/api/v1/client/auth/**",
-                            "/api/v1/agency/auth/**", "/api/v1/files/**")
-                        .permitAll()
-                        .requestMatchers("/api/v1/client/**")
-                        .hasRole("USER")
-                        .requestMatchers("/api/v1/agency/**")
-                        .hasRole("AGENCY"))
+                            "/api/v1/fines-penalties/inspector/auth/**",
+                            "/api/v1/fines-penalties/user/auth/**",
+                            "/api/v1/fines-penalties/court/penalty-webhook",
+                            "/api/v1/fines-penalties/common/**",
+                            "/api/v1/fines-penalties/notification-service/callback",
+                            "/api/v1/fines-penalties/user/otp/requesting-by-pinfl"
+                        ).permitAll()
+                        .requestMatchers("/api/v1/fines-penalties/inspector/**")
+                        .hasRole("INSPECTOR")
+                        .requestMatchers("/api/v1/fines-penalties/user/**")
+                        .hasRole("USER"))
             .csrf(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)

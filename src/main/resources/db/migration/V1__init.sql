@@ -1,9 +1,5 @@
 CREATE TYPE offence_status AS ENUM (
-    'NEW',
-    'PENDING',
-    'PAID',
-    'OVERDUE',
-    'CANCELLED'
+    'NEW', 'FAILED_TO_SEND', 'SENT_TO_COURT', 'PENALTY_RULED_OUT', 'PAID', 'OVERDUE', 'CANCELLED'
 );
 
 CREATE TYPE penalty_type AS ENUM (
@@ -33,7 +29,7 @@ CREATE TYPE user_role AS ENUM (
 
 CREATE TABLE code_articles (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    reference text NOT NULL UNIQUE,
+    reference VARCHAR(255) NOT NULL UNIQUE,
     title text NOT NULL,
     content text NOT NULL,
     -- timestamps
@@ -43,10 +39,12 @@ CREATE TABLE code_articles (
     CONSTRAINT uq_code_articles_reference UNIQUE (reference)
 );
 
+CREATE INDEX idx_code_articles_reference ON code_articles (reference);
+
 CREATE TABLE inspectors (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    full_name text NOT NULL,
-    personnel_number text NOT NULL UNIQUE,
+    full_name VARCHAR(255) NOT NULL,
+    personnel_number VARCHAR(255) NOT NULL UNIQUE,
     pinfl varchar(14) NOT NULL UNIQUE,
     password TEXT NOT NULL,
     date_of_birth date NOT NULL,
@@ -56,15 +54,16 @@ CREATE TABLE inspectors (
     updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_inspectors ON inspectors (personnel_number);
+CREATE INDEX idx_inspectors_personnel_number ON inspectors (personnel_number);
 
 CREATE TABLE users (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    full_name text NOT NULL,
-    date_of_birth date NOT NULL,
-    phone text NOT NULL UNIQUE,
+    full_name VARCHAR(255) NOT NULL,
+    age int NOT NULL,
+    phone VARCHAR(12) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
     pinfl varchar(14) NOT NULL UNIQUE,
-    password TEXT NOT NULL,
+    password TEXT DEFAULT NULL,
     is_active boolean NOT NULL DEFAULT TRUE,
     -- timestamps
     created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -73,29 +72,39 @@ CREATE TABLE users (
 
 CREATE INDEX idx_users_phone ON users (phone);
 
+CREATE INDEX idx_users_pinfl ON users (pinfl);
+
+
 CREATE TABLE legal_offenses (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    court_offense_id bigint default null,
+    court_case_number varchar(255) default null,
     inspector_id bigint NOT NULL,
+    user_id bigint NOT NULL,
     code_article_id bigint NOT NULL,
-    offender_pinfl varchar(14) NOT NULL,
-    offender_full_name text NOT NULL,
     offense_location text NOT NULL,
     offender_explanation text,
     description text NOT NULL,
     status offence_status NOT NULL,
-    protocol_number text NOT NULL UNIQUE,
+    protocol_number VARCHAR(255) NOT NULL UNIQUE,
     offense_date_time timestamptz NOT NULL,
     -- timestamps
     created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     -- relations
     CONSTRAINT fk_legal_offense_inspector FOREIGN KEY (inspector_id) REFERENCES inspectors (id) ON DELETE RESTRICT,
+    CONSTRAINT fk_legal_offense_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT,
     CONSTRAINT fk_legal_offense_code_article FOREIGN KEY (code_article_id) REFERENCES code_articles (id) ON DELETE RESTRICT
 );
 
-CREATE INDEX idx_legal_offenses_offender_pinfl ON legal_offenses (offender_pinfl);
+CREATE INDEX idx_legal_offenses_inspector_id ON legal_offenses (inspector_id);
 
-CREATE INDEX idx_legal_offenses_id_offender_pinfl ON legal_offenses (id, offender_pinfl);
+CREATE INDEX idx_legal_offenses_user_id ON legal_offenses (user_id);
+
+CREATE INDEX idx_legal_offenses_id_user_id ON legal_offenses (id, user_id);
+
+CREATE INDEX idx_legal_offenses_id_status ON legal_offenses (id, status);
+
 
 CREATE TABLE penalties (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -106,8 +115,10 @@ CREATE TABLE penalties (
     bhm_multiplier numeric(10, 1) NOT NULL,
     due_date timestamptz NOT NULL,
     court_decision_text text NOT NULL,
+    court_penalty_id bigint NOT NULL,
+    qualification varchar(255) NOT NULL,
+    deprivation_duration_months integer NOT NULL,
     court_decision_date timestamptz NOT NULL,
-    court_case_number text NOT NULL UNIQUE,
     -- timestamps
     created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,

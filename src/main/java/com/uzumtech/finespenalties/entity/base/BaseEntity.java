@@ -33,11 +33,11 @@ public class BaseEntity {
     Long id;
 
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     OffsetDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(insertable = false)
+    @Column(insertable = false, nullable = false)
     OffsetDateTime updatedAt;
 }
 

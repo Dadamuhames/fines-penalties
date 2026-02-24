@@ -2,7 +2,7 @@ package com.uzumtech.finespenalties.service.impl.auth.otp;
 
 import com.uzumtech.finespenalties.entity.redis.OtpLockoutEntity;
 import com.uzumtech.finespenalties.repository.redis.OtpLockoutRepository;
-import com.uzumtech.finespenalties.service.intr.OtpRequestLockoutService;
+import com.uzumtech.finespenalties.service.intr.otp.OtpRequestLockoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

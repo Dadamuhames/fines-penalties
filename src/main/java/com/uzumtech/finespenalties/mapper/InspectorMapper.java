@@ -8,9 +8,8 @@ import org.mapstruct.ReportingPolicy;
 
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public abstract class InspectorMapper {
+public interface InspectorMapper {
 
-    public abstract InspectorDto inspectorToDto(InspectorEntity inspector);
-
+    InspectorDto inspectorToDto(InspectorEntity inspector);
 
 }
