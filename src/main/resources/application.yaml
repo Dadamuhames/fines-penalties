@@ -1,0 +1,119 @@
+spring:
+  application:
+    name: finespenalties
+
+  security:
+    cors:
+      allowed-origins: "http://localhost:3000,"
+      allowed-methods: "*"
+      allowed-headers: "*"
+
+  # JPA configuration
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    tomcat:
+      test-on-borrow: true
+      validation-query: SELECT 1
+    hikari:
+      maximum-pool-size: 16
+      minimum-idle: 8
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 10
+        order_updates: true
+        order_inserts: true
+        format_sql: true
+        generate_statistics: true
+        default_schema: postgres
+
+  kafka:
+    consumer:
+      bootstrap-servers: kafka:9092
+
+    producer:
+      bootstrap-servers: kafka:9092
+      acks: -1
+
+  # Flyway configuration
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    validate-on-migrate: true
+    baseline-version: 0
+    schemas: postgres
+
+  data:
+    redis:
+      host: ${REDIS_HOST:0.0.0.0}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:secure_redis_pass}
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_LETTUCE_MAX_ACTIVE:32}
+          max-idle: ${REDIS_POOL_LETTUCE_MAX_IDLE:16}
+          min-idle: ${REDIS_POOL_LETTUCE_MIN_IDLE:8}
+          max-wait: ${REDIS_POOL_LETTUCE_MAX_WAIT:2000}
+      database: 0
+      timeout: ${REDIS_CONNECT_TIMEOUT:2000}
+      default-ttl: ${REDIS_DEFAULT_TTL:30000}
+      order-ttl: ${REDIS_ORDER_TTL:5000}
+      merchant-ttl: ${REDIS_MERCHANT_TTL:5000}
+
+# Tomcat configuration
+server:
+  port: ${PORT}
+  tomcat:
+    connection-timeout: 10000
+    accept-count: 100
+    max-connections: 2000
+    keep-alive-timeout: 60000
+    threads:
+      max: 1000
+      min-spare: 200
+
+logging:
+  config: classpath:log4j2.yml
+
+  level:
+    org:
+      apache:
+        kafka: WARN
+      springframework:
+        kafka: WARN
+
+
+jwt:
+  secret-key: ${JWT_SECRET}
+  access-ttl: 900000
+  refresh-ttl: 1500000
+
+services:
+  notification:
+    url: ${NOTIFICATION_URL}
+    login: ${NOTIFICATION_LOGIN}
+    password: ${NOTIFICATION_PASSWORD}
+
+  gcp:
+    url: ${GCP_URL}
+    login: ""
+    password: ""
+
+  court:
+    baseUrl: ${COURT_URL}
+    login: ${COURT_LOGIN}
+    password: ${COURT_PASSWORD}
+    webhookSecret: ${COURT_WEBHOOK_SECRET}

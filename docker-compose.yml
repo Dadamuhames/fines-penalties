@@ -1,0 +1,131 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_db
+
+    ports:
+      - "5433:5432"
+
+    environment:
+      POSTGRES_DB: "fines_penalties_db"
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "root_password"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: always
+
+  redis:
+    image: redis:7.2-alpine # Легкий и актуальный образ Redis
+    container_name: redis_server
+    # Открываем стандартный порт Redis 6379
+    ports:
+      - "6379:6379"
+    command:
+      redis-server --requirepass secure_redis_pass --appendonly yes
+
+    restart: always
+
+
+  # 2. Веб-интерфейс (Redis Commander)
+  redis-commander:
+    image: ghcr.io/joeferner/redis-commander:latest
+    container_name: redis_commander_ui
+    environment:
+      # Настройка подключения к Redis
+      REDIS_HOSTS: "local_redis:redis:6379"
+      REDIS_PASSWORD: "secure_redis_pass"
+      # Имя, которое будет отображаться в интерфейсе
+      REDIS_CLUSTERS: "default"
+    ports:
+      # Открываем порт для веб-интерфейса (например, 8086)
+      - "8086:8086"
+    depends_on:
+      - redis
+    restart: always
+
+
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: kafka-broker
+    hostname: kafka
+    ports:
+      - "9093:9093"
+
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:9094, INTERNAL://0.0.0.0:9092, EXTERNAL://0.0.0.0:9093
+
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092, EXTERNAL://localhost:9093
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9094"
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "7778:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local-kafka-kraft
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29093
+      DYNAMIC_MODE: "true"
+      AUTH_TYPE: disabled
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: fines-penalties
+    depends_on:
+      - db
+      - kafka
+      - kafka-ui
+      - redis
+      - redis-commander
+    ports:
+      - "7080:7080"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/fines_penalties_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root_password
+
+      PORT: 7080
+
+      NOTIFICATION_URL: "http://217.29.121.129/notification_api/api/notifications"
+      NOTIFICATION_LOGIN: ${NOTIFICATION_LOGIN}
+      NOTIFICATION_PASSWORD: ${NOTIFICATION_PASSWORD}
+
+      GCP_URL: "http://217.29.121.129/gcp_api/api/gcp"
+
+      COURT_URL: "http://192.168.100.160:7070/api/v1/court/external-service"
+      COURT_LOGIN: ${COURT_LOGIN}
+      COURT_PASSWORD: ${COURT_PASSWORD}
+      COURT_WEBHOOK_SECRET: ${COURT_WEBHOOK_SECRET}
+
+      REDIS_HOST: redis
+
+      JWT_SECRET: ${JWT_SECRET}
+
+      SHOW_SQL: true
+
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+
+    restart: unless-stopped
+
+
+volumes:
+  postgres_data: { }
+  redis_data: {}
