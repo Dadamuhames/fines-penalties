@@ -44,7 +44,6 @@ public class KafkaProducerConfig {
             new DelegatingByTypeSerializer(
                 Map.of(
                     byte[].class, new ByteArraySerializer(),
-                    OtpSendEvent.class, new JacksonJsonSerializer<>(),
                     NotificationEvent.class, new JacksonJsonSerializer<>(),
                     OffenseEvent.class, new JacksonJsonSerializer<>()
                 )));

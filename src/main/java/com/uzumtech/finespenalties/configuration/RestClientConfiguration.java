@@ -5,12 +5,15 @@ import com.uzumtech.finespenalties.configuration.property.service.GcpServiceProp
 import com.uzumtech.finespenalties.configuration.property.service.NotificationServiceProperties;
 import com.uzumtech.finespenalties.handler.RestClientExceptionHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
+import org.springframework.boot.http.client.HttpClientSettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
+import java.time.Duration;
 import java.util.Base64;
 
 @Configuration
@@ -56,11 +59,8 @@ public class RestClientConfiguration {
 
     @Bean
     public ClientHttpRequestFactory clientHttpRequestFactory() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        var settings = HttpClientSettings.defaults().withReadTimeout(Duration.ofMillis(5000)).withConnectTimeout(Duration.ofMillis(5000));
 
-        factory.setConnectTimeout(5000);
-        factory.setReadTimeout(1000);
-
-        return factory;
+        return ClientHttpRequestFactoryBuilder.jdk().build(settings);
     }
 }
