@@ -5,7 +5,7 @@ import com.uzumtech.finespenalties.dto.response.TokenResponse;
 import com.uzumtech.finespenalties.entity.base.CustomUserDetails;
 
 public interface TokenService {
-    TokenResponse createPair(final CustomUserDetails user);
+    TokenResponse createPair(CustomUserDetails user);
 
-    TokenResponse refreshToken(final RefreshRequest request);
+    TokenResponse refreshToken(RefreshRequest request);
 }

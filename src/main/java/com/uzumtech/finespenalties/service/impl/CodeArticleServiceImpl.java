@@ -30,6 +30,6 @@ public class CodeArticleServiceImpl implements CodeArticleService {
 
 
     public CodeArticleEntity findByIdOrThrowBadRequestException(Long codeArticleId) {
-        return codeArticleRepository.findById(codeArticleId).orElseThrow(() -> new CodeArticleIdInvalidException(ErrorCode.CODE_ARTICLE_NOT_FOUND));
+        return codeArticleRepository.findById(codeArticleId).orElseThrow(() -> new CodeArticleIdInvalidException(ErrorCode.CODE_ARTICLE_NOT_FOUND_CODE));
     }
 }

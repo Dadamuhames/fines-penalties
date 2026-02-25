@@ -13,7 +13,7 @@ import org.springframework.web.client.RestClient;
 public class NotificationAdapter {
     private final RestClient notificationRestClient;
 
-    public NotificationResponse sendNotification(final NotificationRequest request) {
+    public NotificationResponse sendNotification(NotificationRequest request) {
         var response = notificationRestClient.post().uri("/sending").body(request).retrieve().toEntity(NotificationResponse.class);
 
         return response.getBody();

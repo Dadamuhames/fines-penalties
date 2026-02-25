@@ -2,9 +2,10 @@ package com.uzumtech.finespenalties.service.impl.court;
 
 import com.uzumtech.finespenalties.component.adapter.CourtAdapter;
 import com.uzumtech.finespenalties.constant.RedisConstants;
+import com.uzumtech.finespenalties.constant.enums.ErrorCode;
 import com.uzumtech.finespenalties.dto.request.court.CourtRefreshRequest;
 import com.uzumtech.finespenalties.dto.response.court.CourtTokenResponse;
-import com.uzumtech.finespenalties.exception.http.HttpClientException;
+import com.uzumtech.finespenalties.exception.kafka.nontransients.CourtTokenNotExistsException;
 import com.uzumtech.finespenalties.service.intr.court.CourtAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,20 +17,18 @@ public class CourtAuthServiceImpl implements CourtAuthService {
     private final CourtAdapter courtAdapter;
     private final RedisTemplate<String, Object> redisTemplate;
 
+    public void refreshTokens() {
+        CourtTokenResponse response = fetchTokens();
+
+        storeTokens(response);
+    }
+
     public String getAuthToken() {
         String accessToken = (String) redisTemplate.opsForValue().get(RedisConstants.COURT_ACCESS_TOKEN);
 
-        if (accessToken == null) accessToken = getNewToken();
+        if (accessToken == null) throw new CourtTokenNotExistsException(ErrorCode.COURT_TOKEN_NOT_EXISTS_CODE);
 
         return accessToken;
-    }
-
-    private String getNewToken() {
-        CourtTokenResponse tokenResponse = fetchTokens();
-
-        storeTokens(tokenResponse);
-
-        return tokenResponse.accessToken();
     }
 
 
@@ -53,23 +52,7 @@ public class CourtAuthServiceImpl implements CourtAuthService {
     private CourtTokenResponse getNewPair(String refreshToken) {
         CourtRefreshRequest request = new CourtRefreshRequest(refreshToken);
 
-        CourtTokenResponse tokenResponse;
-
-        try {
-            tokenResponse = courtAdapter.sendRefreshRequest(request);
-
-        } catch (HttpClientException ex) {
-
-            tokenResponse = courtAdapter.sendLoginRequest();
-        }
-
-        return tokenResponse;
-    }
-
-
-    public void flushTokens() {
-        redisTemplate.delete(RedisConstants.COURT_ACCESS_TOKEN);
-        redisTemplate.delete(RedisConstants.COURT_REFRESH_TOKEN);
+        return courtAdapter.sendRefreshRequest(request);
     }
 
 

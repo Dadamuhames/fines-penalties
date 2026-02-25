@@ -5,5 +5,5 @@ import com.uzumtech.finespenalties.dto.response.OtpResponse;
 
 public interface OtpRequestService {
 
-    OtpResponse sendByPinfl(final OtpByPinflRequest request);
+    OtpResponse sendByPinfl(OtpByPinflRequest request);
 }

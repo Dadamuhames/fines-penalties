@@ -23,28 +23,28 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final UserDetailDispatcher detailsServiceDispatcher;
 
     @Transactional
-    public RefreshTokenEntity createRefreshToken(final CustomUserDetails userDetails) {
+    public RefreshTokenEntity createRefreshToken(CustomUserDetails userDetails) {
         RefreshTokenEntity refreshToken = RefreshTokenEntity.builder()
             .token(UUID.randomUUID().toString())
             .userRole(userDetails.getUserRole())
             .subject(userDetails.getUsername())
-            .expiryDate(Instant.now().plusMillis(jwtProperty.getRefreshTtl()))
+            .expiryDate(Instant.now().plusSeconds(jwtProperty.getRefreshTtlSeconds()))
             .build();
 
         return refreshTokenRepository.save(refreshToken);
     }
 
-    public RefreshTokenEntity findByToken(final String token) {
+    public RefreshTokenEntity findByToken(String token) {
         return refreshTokenRepository.findByToken(token).orElseThrow(() -> new RefreshTokenException(ErrorCode.REFRESH_TOKEN_INVALID_CODE));
     }
 
 
-    public CustomUserDetails getUserDetails(final RefreshTokenEntity refreshToken) {
+    public CustomUserDetails getUserDetails(RefreshTokenEntity refreshToken) {
         return (CustomUserDetails) detailsServiceDispatcher.loadUserByLoginAndRole(refreshToken.getSubject(), refreshToken.getUserRole());
     }
 
 
-    public void verifyExpiration(final RefreshTokenEntity token) {
+    public void verifyExpiration(RefreshTokenEntity token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
             throw new RefreshTokenException(ErrorCode.REFRESH_TOKEN_INVALID_CODE);

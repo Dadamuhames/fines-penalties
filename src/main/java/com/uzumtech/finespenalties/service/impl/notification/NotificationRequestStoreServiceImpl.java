@@ -17,24 +17,24 @@ public class NotificationRequestStoreServiceImpl implements NotificationRequestS
     private final NotificationRequestRepository notificationRequestRepository;
 
     @Transactional
-    public boolean isAvailableForProcessing(final UUID requestId) {
+    public boolean isAvailableForProcessing(UUID requestId) {
         return notificationRequestRepository.isAvailableForProcessing(requestId);
     }
 
     @Transactional
-    public void createNotificationRequest(final NotificationEvent event) {
+    public void createNotificationRequest(NotificationEvent event) {
         NotificationRequestEntity entity = NotificationRequestEntity.builder().notificationType(event.type()).notificationText(event.text()).requestId(event.requestId()).requestStatus(NotificationRequestStatus.NEW).notificationReceiver(event.receiver()).build();
 
         notificationRequestRepository.save(entity);
     }
 
     @Transactional
-    public void markAsDelivered(final UUID requestId, final Long notificationServiceId) {
+    public void markAsDelivered(UUID requestId, Long notificationServiceId) {
         notificationRequestRepository.markAsDelivered(requestId, notificationServiceId);
     }
 
     @Transactional
-    public void changeStatus(final UUID requestId, final NotificationRequestStatus status) {
+    public void changeStatus(UUID requestId, NotificationRequestStatus status) {
         notificationRequestRepository.updateRequestStatus(requestId, status);
     }
 }

@@ -1,4 +1,4 @@
-package com.uzumtech.finespenalties.repository;
+package com.uzumtech.finespenalties.repository.redis;
 
 import com.uzumtech.finespenalties.entity.redis.OtpCheckLockoutEntity;
 import org.springframework.data.repository.CrudRepository;

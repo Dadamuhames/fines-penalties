@@ -7,11 +7,11 @@ import java.util.UUID;
 
 public interface NotificationRequestStoreService {
 
-    boolean isAvailableForProcessing(final UUID requestId);
+    boolean isAvailableForProcessing(UUID requestId);
 
-    void createNotificationRequest(final NotificationEvent event);
+    void createNotificationRequest(NotificationEvent event);
 
-    void markAsDelivered(final UUID requestId, final Long notificationServiceId);
+    void markAsDelivered(UUID requestId, final Long notificationServiceId);
 
-    void changeStatus(final UUID requestId, final NotificationRequestStatus status);
+    void changeStatus(UUID requestId, final NotificationRequestStatus status);
 }

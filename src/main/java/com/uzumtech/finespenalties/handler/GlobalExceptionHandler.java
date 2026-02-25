@@ -29,7 +29,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
     @ExceptionHandler(ApplicationException.class)
-    private ResponseEntity<ErrorResponse> handleApplicationException(final ApplicationException ex) {
+    private ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException ex) {
         log.error("ErrorCode: {}", ex.getMessage());
 
         var errorResponse = ErrorResponse.of(ex);
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
-    private ResponseEntity<ErrorResponse> handleMissingRequestHeaderException(final MissingRequestHeaderException ex) {
+    private ResponseEntity<ErrorResponse> handleMissingRequestHeaderException(MissingRequestHeaderException ex) {
         log.error("MissingRequestHeaderException : {}", ex.getMessage(), ex);
 
         var error = ErrorResponse.of(ErrorCode.MISSING_REQUEST_HEADER_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceAccessException.class)
-    private ResponseEntity<ErrorResponse> handleResourceAccessException(final ResourceAccessException ex) {
+    private ResponseEntity<ErrorResponse> handleResourceAccessException(ResourceAccessException ex) {
         log.error("ResourceAccessException = {}", ex.getMessage(), ex);
 
         var error = ErrorResponse.of(ErrorCode.INTERNAL_TIMEOUT_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    private ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException ex) {
+    private ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         log.error("MethodArgumentTypeMismatchException = {}", ex.getMessage(), ex);
 
         var error = ErrorResponse.of(ErrorCode.INVALID_REQUEST_PARAM_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException ex) {
+    private ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         log.error("Validation error: {}", ex.getMessage(), ex);
 
         var validationErrors = ex.getBindingResult().getAllErrors().stream().map(error -> error instanceof FieldError fieldError ? fieldError.getField() + ": " + fieldError.getDefaultMessage() : error.getDefaultMessage()).toList();
@@ -95,7 +95,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    private ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(final HttpMessageNotReadableException ex) {
+    private ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         log.error("HttpMessageNotReadableException : {}", ex.getMessage(), ex);
 
         var error = ErrorResponse.of(ErrorCode.JSON_NOT_VALID_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
@@ -113,7 +113,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    private ResponseEntity<ErrorResponse> handleNoHandlerFoundException(final NoHandlerFoundException ex) {
+    private ResponseEntity<ErrorResponse> handleNoHandlerFoundException(NoHandlerFoundException ex) {
         log.error("NoHandlerFoundException : {}", ex.getMessage(), ex);
 
         var error = ErrorResponse.of(ErrorCode.HANDLER_NOT_FOUND_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
@@ -122,7 +122,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
-    private ResponseEntity<ErrorResponse> handleHttpClientErrorException(final HttpClientErrorException ex) {
+    private ResponseEntity<ErrorResponse> handleHttpClientErrorException(HttpClientErrorException ex) {
         log.error("HttpClientErrorException : {}", ex.getMessage(), ex);
 
         var error = ErrorResponse.of(ErrorCode.EXTERNAL_SERVICE_FAILED_ERROR_CODE, ex.getMessage(), ErrorType.EXTERNAL);
@@ -131,7 +131,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpServerErrorException.class)
-    private ResponseEntity<ErrorResponse> handleHttpServerErrorException(final HttpServerErrorException ex) {
+    private ResponseEntity<ErrorResponse> handleHttpServerErrorException(HttpServerErrorException ex) {
         log.error("HttpServerErrorException : {}", ex.getMessage(), ex);
 
         var error = ErrorResponse.of(ErrorCode.EXTERNAL_SERVICE_FAILED_ERROR_CODE, ex.getMessage(), ErrorType.EXTERNAL);
@@ -140,7 +140,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    private ResponseEntity<ErrorResponse> handleGenericException(final Exception ex) {
+    private ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         log.error("Exception : {}", ex.getMessage(), ex);
 
         var error = ErrorResponse.of(ErrorCode.INTERNAL_SERVICE_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);

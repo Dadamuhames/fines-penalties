@@ -12,7 +12,7 @@ import org.springframework.web.client.RestClient;
 public class GcpAdapter {
     private final RestClient gcpRestClient;
 
-    public GcpResponse fetchUserInfoByPinfl(final String pinfl) {
+    public GcpResponse fetchUserInfoByPinfl(String pinfl) {
         String url = String.format("/users/by-pi/%s", pinfl);
 
         var response = gcpRestClient.get().uri(url).retrieve().toEntity(GcpResponse.class);

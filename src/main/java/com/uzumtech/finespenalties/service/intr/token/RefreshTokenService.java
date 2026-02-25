@@ -5,13 +5,13 @@ import com.uzumtech.finespenalties.entity.base.CustomUserDetails;
 
 public interface RefreshTokenService {
 
-    RefreshTokenEntity createRefreshToken(final CustomUserDetails userDetails);
+    RefreshTokenEntity createRefreshToken(CustomUserDetails userDetails);
 
-    RefreshTokenEntity findByToken(final String token);
+    RefreshTokenEntity findByToken(String token);
 
-    CustomUserDetails getUserDetails(final RefreshTokenEntity refreshToken);
+    CustomUserDetails getUserDetails(RefreshTokenEntity refreshToken);
 
-    void verifyExpiration(final RefreshTokenEntity token);
+    void verifyExpiration(RefreshTokenEntity token);
 
     void expireToken(RefreshTokenEntity token);
 }

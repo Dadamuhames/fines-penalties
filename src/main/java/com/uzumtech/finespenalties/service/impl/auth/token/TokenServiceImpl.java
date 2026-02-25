@@ -17,7 +17,7 @@ public class TokenServiceImpl implements TokenService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
 
-    public TokenResponse createPair(final CustomUserDetails user) {
+    public TokenResponse createPair(CustomUserDetails user) {
         String accessToken = jwtService.generateToken(user);
 
         RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(user);
@@ -26,7 +26,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Transactional
-    public TokenResponse refreshToken(final RefreshRequest request) {
+    public TokenResponse refreshToken(RefreshRequest request) {
         RefreshTokenEntity refreshToken = refreshTokenService.findByToken(request.refreshToken());
 
         refreshTokenService.verifyExpiration(refreshToken);

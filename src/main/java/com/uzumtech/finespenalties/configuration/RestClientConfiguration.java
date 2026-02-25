@@ -59,7 +59,7 @@ public class RestClientConfiguration {
 
     @Bean
     public ClientHttpRequestFactory clientHttpRequestFactory() {
-        var settings = HttpClientSettings.defaults().withReadTimeout(Duration.ofMillis(5000)).withConnectTimeout(Duration.ofMillis(5000));
+        var settings = HttpClientSettings.defaults().withReadTimeout(Duration.ofMillis(10000)).withConnectTimeout(Duration.ofMillis(5000));
 
         return ClientHttpRequestFactoryBuilder.jdk().build(settings);
     }

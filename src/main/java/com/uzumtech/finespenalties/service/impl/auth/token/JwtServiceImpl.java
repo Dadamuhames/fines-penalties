@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
@@ -26,11 +27,11 @@ import java.util.function.Function;
 public class JwtServiceImpl implements JwtService {
     private final JwtProperty jwtProperty;
 
-    public String extractSubject(final String jwt) {
+    public String extractSubject(String jwt) {
         return extractClaim(jwt, Claims::getSubject);
     }
 
-    public Role extractRole(final String jwt) {
+    public Role extractRole(String jwt) {
         final Claims claims = extractAllClaims(jwt);
 
         String provider = claims.get("role").toString();
@@ -38,13 +39,13 @@ public class JwtServiceImpl implements JwtService {
         return Role.valueOf(provider);
     }
 
-    private <T> T extractClaim(final String jwt, Function<Claims, T> claimsResolver) {
+    private <T> T extractClaim(String jwt, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(jwt);
 
         return claimsResolver.apply(claims);
     }
 
-    public Claims extractAllClaims(final String jwt) {
+    public Claims extractAllClaims(String jwt) {
         try {
             return Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(jwt).getPayload();
         } catch (JwtException ex) {
@@ -58,25 +59,28 @@ public class JwtServiceImpl implements JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(final Map<String, Object> extraClaims, final String subject) {
+    public String generateToken(Map<String, Object> extraClaims, String subject) {
+
+        Date expiration = Date.from(Instant.now().plusSeconds(jwtProperty.getAccessTtlSeconds()));
+
         return Jwts.builder()
             .claims(extraClaims)
             .subject(subject)
             .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + jwtProperty.getAccessTtl()))
+            .expiration(expiration)
             .signWith(getSignInKey())
             .compact();
     }
 
-    public String generateToken(final CustomUserDetails userDetails) {
+    public String generateToken(CustomUserDetails userDetails) {
         return generateToken(Map.of("role", userDetails.getUserRole()), userDetails.getUsername());
     }
 
-    public boolean isTokenExpired(final String jwt) {
+    public boolean isTokenExpired(String jwt) {
         return extractExpiration(jwt).before(new Date());
     }
 
-    public Date extractExpiration(final String jwt) {
+    public Date extractExpiration(String jwt) {
         return extractClaim(jwt, Claims::getExpiration);
     }
 }

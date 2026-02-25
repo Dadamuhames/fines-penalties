@@ -2,7 +2,7 @@ package com.uzumtech.finespenalties.controller.user;
 
 import com.uzumtech.finespenalties.dto.request.UserSetPasswordRequest;
 import com.uzumtech.finespenalties.entity.UserEntity;
-import com.uzumtech.finespenalties.service.impl.user.UserProfileService;
+import com.uzumtech.finespenalties.service.intr.user.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class UserProfileController {
     private final UserProfileService profileService;
 
     @PostMapping("/set-password")
-    public ResponseEntity<Void> setPassword(@AuthenticationPrincipal final UserEntity user, @Valid @RequestBody final UserSetPasswordRequest request) {
+    public ResponseEntity<Void> setPassword(@AuthenticationPrincipal UserEntity user, @Valid @RequestBody UserSetPasswordRequest request) {
         profileService.setUserPassword(user, request);
 
         return ResponseEntity.ok().build();

@@ -1,14 +1,10 @@
 package com.uzumtech.finespenalties.service.impl.auth.otp;
 
-import com.uzumtech.finespenalties.constant.TimeConstants;
-import com.uzumtech.finespenalties.constant.enums.ErrorCode;
+import com.uzumtech.finespenalties.constant.OtpConstants;
 import com.uzumtech.finespenalties.dto.OtpDto;
-import com.uzumtech.finespenalties.entity.redis.OtpCheckLockoutEntity;
 import com.uzumtech.finespenalties.entity.redis.OtpEntity;
-import com.uzumtech.finespenalties.exception.OtpInvalidException;
 import com.uzumtech.finespenalties.repository.redis.OtpRepository;
 import com.uzumtech.finespenalties.service.intr.otp.OtpService;
-import com.uzumtech.finespenalties.service.intr.otp.OtpVerificationLockoutService;
 import com.uzumtech.finespenalties.utils.OtpUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,16 +14,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OtpServiceImpl implements OtpService {
     private final OtpUtils otpUtils;
-    private final OtpVerificationLockoutService verificationLockoutService;
     private final OtpRepository otpRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public OtpDto createOtp(final String phone) {
+    public OtpDto createOtp(String phone) {
         String otp = otpUtils.generateOtp();
 
         OtpEntity prevOtp = otpRepository.findByPhone(phone).orElse(null);
 
-        Integer currentAttempt = 1;
+        Integer currentAttempt = OtpConstants.DEFAULT_CHECK_ATTEMPT_COUNT;
 
         if (prevOtp != null) {
             currentAttempt += prevOtp.getAttempt();
@@ -41,27 +36,17 @@ public class OtpServiceImpl implements OtpService {
         return new OtpDto(otp, currentAttempt);
     }
 
-    public void validateOtp(final String phone, final String otpCode) {
+    public boolean isOtpValid(String phone, String otpCode) {
         OtpEntity otp = otpRepository.findByPhone(phone).orElse(null);
 
-        if (!isOtpValid(otp, otpCode)) {
-            OtpCheckLockoutEntity checkLockoutEntity = verificationLockoutService.getInstance(phone);
-
-            if (checkLockoutEntity.getAttempt() >= 5) {
-                verificationLockoutService.lockoutForSeconds(phone, TimeConstants.ONE_HOUR_IN_SECONDS);
-            } else {
-                verificationLockoutService.increaseAttempt(phone);
-            }
-
-            throw new OtpInvalidException(ErrorCode.OTP_EXPIRED_CODE);
-        }
+        return isOtpValid(otp, otpCode);
     }
 
-    public boolean isOtpValid(final OtpEntity otp, final String otpCode) {
+    private boolean isOtpValid(OtpEntity otp, String otpCode) {
         return otp != null && passwordEncoder.matches(otpCode, otp.getOtpHash());
     }
 
-    public void invalidateOtp(final String phone) {
+    public void invalidateOtp(String phone) {
         otpRepository.findByPhone(phone).ifPresent(otpRepository::delete);
     }
 }
