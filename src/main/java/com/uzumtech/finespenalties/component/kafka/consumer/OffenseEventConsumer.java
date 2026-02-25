@@ -8,16 +8,13 @@ import com.uzumtech.finespenalties.dto.response.court.CourtOffenseResponse;
 import com.uzumtech.finespenalties.exception.http.HttpClientException;
 import com.uzumtech.finespenalties.exception.http.HttpServerException;
 import com.uzumtech.finespenalties.exception.kafka.nontransients.HttpRequestInvalidException;
-import com.uzumtech.finespenalties.exception.kafka.transients.CourtAuthFailedException;
 import com.uzumtech.finespenalties.exception.kafka.transients.HttpServerUnavailableException;
 import com.uzumtech.finespenalties.exception.kafka.transients.TransientException;
 import com.uzumtech.finespenalties.service.intr.OffenseService;
-import com.uzumtech.finespenalties.service.intr.court.CourtAuthService;
 import com.uzumtech.finespenalties.service.intr.court.CourtOffenseRegistrationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -33,7 +30,6 @@ import org.springframework.stereotype.Component;
 public class OffenseEventConsumer implements EventConsumer<OffenseEvent> {
 
     private final CourtOffenseRegistrationService offenseRegistrationService;
-    private final CourtAuthService courtAuthService;
     private final OffenseService offenseService;
 
 
@@ -51,14 +47,6 @@ public class OffenseEventConsumer implements EventConsumer<OffenseEvent> {
             throw new HttpServerUnavailableException(ErrorCode.COURT_SERVICE_UNAVAILABLE_CODE, ex);
 
         } catch (HttpClientException ex) {
-
-            // if HTTP Status == 401 => Court auth failed => flushing tokens so they are re-fetched on retry
-            // and throwing TransientException
-            if (ex.getStatus() == HttpStatus.UNAUTHORIZED || ex.getStatus() == HttpStatus.FORBIDDEN) {
-                courtAuthService.flushTokens();
-
-                throw new CourtAuthFailedException(ErrorCode.COURT_AUTH_FAILED_CODE, ex);
-            }
 
             throw new HttpRequestInvalidException(ErrorCode.COURT_REQUEST_INVALID_CODE, ex);
         }

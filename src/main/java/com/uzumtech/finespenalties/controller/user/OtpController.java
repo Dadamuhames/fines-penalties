@@ -18,7 +18,7 @@ public class OtpController {
     private final OtpRequestService otpRequestService;
 
     @PostMapping("/requesting-by-pinfl")
-    public ResponseEntity<OtpResponse> requestOtp(@Valid @RequestBody final OtpByPinflRequest request) {
+    public ResponseEntity<OtpResponse> requestOtp(@Valid @RequestBody OtpByPinflRequest request) {
         OtpResponse otpResponse = otpRequestService.sendByPinfl(request);
 
         return ResponseEntity.ok(otpResponse);

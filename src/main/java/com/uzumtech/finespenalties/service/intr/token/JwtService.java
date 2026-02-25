@@ -10,19 +10,19 @@ import java.util.Map;
 
 public interface JwtService {
 
-    String extractSubject(final String jwt);
+    String extractSubject(String jwt);
 
-    Role extractRole(final String jwt);
+    Role extractRole(String jwt);
 
-    Claims extractAllClaims(final String jwt);
+    Claims extractAllClaims(String jwt);
 
     SecretKey getSignInKey();
 
-    String generateToken(final Map<String, Object> extraClaims, final String subject);
+    String generateToken(Map<String, Object> extraClaims, final String subject);
 
-    String generateToken(final CustomUserDetails userDetails);
+    String generateToken(CustomUserDetails userDetails);
 
-    boolean isTokenExpired(final String jwt);
+    boolean isTokenExpired(String jwt);
 
-    Date extractExpiration(final String jwt);
+    Date extractExpiration(String jwt);
 }

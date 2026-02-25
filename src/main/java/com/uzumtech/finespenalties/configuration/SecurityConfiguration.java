@@ -35,7 +35,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    protected SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/api/**")
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(

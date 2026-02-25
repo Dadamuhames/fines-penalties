@@ -39,7 +39,8 @@ public enum ErrorCode {
     COURT_AUTH_FAILED_CODE(10740, "Court auth failed"),
     COURT_WEBHOOK_SECRET_INVALID_CODE(10750, "Court webhook secret invalid"),
 
-    CODE_ARTICLE_NOT_FOUND(18000, "Code article not found"),
+    CODE_ARTICLE_NOT_FOUND_CODE(10800, "Code article not found"),
+    COURT_TOKEN_NOT_EXISTS_CODE(10810, "Access token for Court Service missing"),
 
     NOTIFICATION_ID_INVALID_CODE(10900, "Notification id invalid"),
     NOTIFICATION_REQUEST_INVALID_CODE(10910, "Request to notification service invalid");

@@ -98,8 +98,8 @@ logging:
 
 jwt:
   secret-key: ${JWT_SECRET}
-  access-ttl: 900000
-  refresh-ttl: 1500000
+  access-ttl-seconds: 3600
+  refresh-ttl-seconds: 7200
 
 services:
   notification:

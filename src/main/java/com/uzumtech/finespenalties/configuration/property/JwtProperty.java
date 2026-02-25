@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class JwtProperty {
     private String secretKey;
 
-    private Long accessTtl;
+    private Long accessTtlSeconds;
 
-    private Long refreshTtl;
+    private Long refreshTtlSeconds;
 }

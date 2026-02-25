@@ -21,7 +21,7 @@ public class InspectorAuthServiceImpl implements InspectorAuthService {
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
-    public TokenResponse login(final InspectorLoginRequest request) {
+    public TokenResponse login(InspectorLoginRequest request) {
         InspectorEntity agency = inspectorRepository.findByPersonnelNumber(request.personnelNumber()).orElseThrow(() -> new InspectorNotFoundException(ErrorCode.LOGIN_INVALID_CODE));
 
         if (!passwordEncoder.matches(request.password(), agency.getPassword())) {

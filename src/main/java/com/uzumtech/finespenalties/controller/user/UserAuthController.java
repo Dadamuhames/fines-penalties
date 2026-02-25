@@ -3,7 +3,7 @@ package com.uzumtech.finespenalties.controller.user;
 import com.uzumtech.finespenalties.dto.request.UserOtpLoginRequest;
 import com.uzumtech.finespenalties.dto.request.UserPasswordLoginRequest;
 import com.uzumtech.finespenalties.dto.response.TokenResponse;
-import com.uzumtech.finespenalties.service.impl.auth.UserAuthService;
+import com.uzumtech.finespenalties.service.intr.user.UserAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +19,14 @@ public class UserAuthController {
     private final UserAuthService authService;
 
     @PostMapping("/login-with-otp")
-    public ResponseEntity<TokenResponse> loginWithOtp(@Valid @RequestBody final UserOtpLoginRequest request) {
+    public ResponseEntity<TokenResponse> loginWithOtp(@Valid @RequestBody UserOtpLoginRequest request) {
         TokenResponse response = authService.loginWithOtp(request);
 
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login-with-password")
-    public ResponseEntity<TokenResponse> loginWithPassword(@Valid @RequestBody final UserPasswordLoginRequest request) {
+    public ResponseEntity<TokenResponse> loginWithPassword(@Valid @RequestBody UserPasswordLoginRequest request) {
         TokenResponse response = authService.loginWithPassword(request);
 
         return ResponseEntity.ok(response);

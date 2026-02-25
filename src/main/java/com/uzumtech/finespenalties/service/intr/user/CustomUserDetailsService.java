@@ -5,7 +5,7 @@ import com.uzumtech.finespenalties.exception.ApplicationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface CustomUserDetailsService {
-    UserDetails loadUserByUsername(final String login) throws ApplicationException;
+    UserDetails loadUserByUsername(String login) throws ApplicationException;
 
     Role getSupportedRole();
 }

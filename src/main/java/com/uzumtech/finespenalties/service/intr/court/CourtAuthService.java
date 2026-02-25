@@ -2,7 +2,7 @@ package com.uzumtech.finespenalties.service.intr.court;
 
 public interface CourtAuthService {
 
-    String getAuthToken();
+    void refreshTokens();
 
-    void flushTokens();
+    String getAuthToken();
 }

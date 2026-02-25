@@ -153,7 +153,7 @@ class InspectorLegalOffenseServiceImplTest {
         // Arrange
         when(userRegisterService.findUserByPinflOrRegister(anyString())).thenReturn(user);
         when(codeArticleService.findByIdOrThrowBadRequestException(registerRequest.codeArticleId()))
-            .thenThrow(new CodeArticleIdInvalidException(ErrorCode.CODE_ARTICLE_NOT_FOUND));
+            .thenThrow(new CodeArticleIdInvalidException(ErrorCode.CODE_ARTICLE_NOT_FOUND_CODE));
 
         // Act & Assert
         assertThrows(RuntimeException.class, () ->

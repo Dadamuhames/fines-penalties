@@ -14,8 +14,6 @@ public interface NotificationRequestRepository extends JpaRepository<Notificatio
 
     Optional<NotificationRequestEntity> findByNotificationServiceId(Long notificationServiceId);
 
-    Optional<NotificationRequestEntity> findByRequestId(UUID requestId);
-
     @Modifying
     @Query("update NotificationRequestEntity n set n.requestStatus = :status, n.updatedAt = CURRENT_TIMESTAMP WHERE n.requestId = :requestId ")
     void updateRequestStatus(@Param("requestId") UUID requestId, @Param("status") NotificationRequestStatus status);

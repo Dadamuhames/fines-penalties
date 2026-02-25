@@ -4,5 +4,5 @@ import com.uzumtech.finespenalties.dto.request.InspectorLoginRequest;
 import com.uzumtech.finespenalties.dto.response.TokenResponse;
 
 public interface InspectorAuthService {
-    TokenResponse login(final InspectorLoginRequest request);
+    TokenResponse login(InspectorLoginRequest request);
 }
