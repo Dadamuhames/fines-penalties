@@ -1,13 +1,11 @@
 package com.uzumtech.finespenalties.entity;
 
 import com.uzumtech.finespenalties.constant.enums.Role;
+import com.uzumtech.finespenalties.entity.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -27,10 +25,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "refresh_tokens", indexes = {@Index(columnList = "token")})
-public class RefreshTokenEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class RefreshTokenEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String token;

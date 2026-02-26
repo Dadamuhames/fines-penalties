@@ -47,12 +47,11 @@ public class InspectorLegalOffenseServiceImpl implements InspectorLegalOffenseSe
 
         CodeArticleEntity codeArticle = codeArticleService.findByIdOrThrowBadRequestException(request.codeArticleId());
 
-        LegalOffenseEntity legalOffense = legalOffenseMapper.requestToEntity(request, inspector, user, codeArticle);
+        String protocolNumber = protocolNumberUtils.generateProtocolNumber();
+
+        LegalOffenseEntity legalOffense = legalOffenseMapper.requestToEntity(request, inspector, user, codeArticle, protocolNumber);
 
         // store in DB
-        String protocolNumber = protocolNumberUtils.generateProtocolNumber();
-        legalOffense.setProtocolNumber(protocolNumber);
-
         LegalOffenseEntity savedOffense = offenseService.saveOffense(legalOffense);
 
         // send to J-Court through Kafka

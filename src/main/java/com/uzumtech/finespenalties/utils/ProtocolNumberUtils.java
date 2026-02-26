@@ -3,9 +3,9 @@ package com.uzumtech.finespenalties.utils;
 import com.uzumtech.finespenalties.repository.LegalOffenseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Component
@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 public class ProtocolNumberUtils {
     private final LegalOffenseRepository legalOffenseRepository;
 
+    @Transactional(readOnly = true)
     public String generateProtocolNumber() {
         var today = LocalDate.now();
 

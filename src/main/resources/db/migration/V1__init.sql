@@ -133,7 +133,9 @@ CREATE TABLE refresh_tokens (
     token text NOT NULL UNIQUE,
     expiry_date timestamptz NOT NULL,
     subject text NOT NULL,
-    user_role user_role NOT NULL
+    user_role user_role NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_refresh_tokens_token ON refresh_tokens (token);
