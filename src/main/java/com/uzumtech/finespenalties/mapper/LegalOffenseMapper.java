@@ -45,7 +45,8 @@ public abstract class LegalOffenseMapper {
     @Mapping(target = "status", constant = "NEW")
     @Mapping(target = "user", source = "user")
     @Mapping(target = "codeArticle", source = "codeArticle")
-    public abstract LegalOffenseEntity requestToEntity(LegalOffenceRegisterRequest request, InspectorEntity inspector, UserEntity user, CodeArticleEntity codeArticle);
+    @Mapping(target = "protocolNumber", source = "protocolNumber")
+    public abstract LegalOffenseEntity requestToEntity(LegalOffenceRegisterRequest request, InspectorEntity inspector, UserEntity user, CodeArticleEntity codeArticle, String protocolNumber);
 
 
     @Mapping(target = "legalOffenseId", source = "offenseEntity.id")

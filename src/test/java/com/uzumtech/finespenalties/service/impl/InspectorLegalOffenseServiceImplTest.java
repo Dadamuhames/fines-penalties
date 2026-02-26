@@ -70,6 +70,8 @@ class InspectorLegalOffenseServiceImplTest {
     private LegalOffenseEntity offense;
     private InspectorLegalOffenseResponse response;
 
+    private final String PROTOCOL_NUMBER = "FP-20260225-0001";
+
     @BeforeEach
     void setUp() {
         inspector = new InspectorEntity();
@@ -91,6 +93,7 @@ class InspectorLegalOffenseServiceImplTest {
 
         offense = new LegalOffenseEntity();
         offense.setId(100L);
+        offense.setProtocolNumber(PROTOCOL_NUMBER);
 
         response = new InspectorLegalOffenseResponse(
             100L,
@@ -125,13 +128,12 @@ class InspectorLegalOffenseServiceImplTest {
     @Test
     void registerLegalOffense_ShouldExecuteFullWorkflowSuccessfully() {
         // Arrange
-        String generatedProtocol = "FP-20260225-0001";
         OffenseEvent expectedEvent = new OffenseEvent(offense.getId());
 
         when(userRegisterService.findUserByPinflOrRegister(registerRequest.offenderPinfl())).thenReturn(user);
         when(codeArticleService.findByIdOrThrowBadRequestException(registerRequest.codeArticleId())).thenReturn(codeArticle);
-        when(legalOffenseMapper.requestToEntity(registerRequest, inspector, user, codeArticle)).thenReturn(offense);
-        when(protocolNumberUtils.generateProtocolNumber()).thenReturn(generatedProtocol);
+        when(protocolNumberUtils.generateProtocolNumber()).thenReturn(PROTOCOL_NUMBER);
+        when(legalOffenseMapper.requestToEntity(registerRequest, inspector, user, codeArticle, PROTOCOL_NUMBER)).thenReturn(offense);
         when(offenseService.saveOffense(offense)).thenReturn(offense);
         when(legalOffenseMapper.entityToInspectorResponse(offense, user.getFullName())).thenReturn(response);
 
@@ -141,7 +143,7 @@ class InspectorLegalOffenseServiceImplTest {
         // Assert
         assertNotNull(result);
         assertEquals(response, result);
-        assertEquals(generatedProtocol, offense.getProtocolNumber());
+        assertEquals(PROTOCOL_NUMBER, offense.getProtocolNumber());
 
         verify(offenseService).saveOffense(offense);
         verify(offenseEventPublisher).publish(expectedEvent);

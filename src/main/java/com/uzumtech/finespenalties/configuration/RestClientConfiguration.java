@@ -10,11 +10,9 @@ import org.springframework.boot.http.client.HttpClientSettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
-import java.util.Base64;
 
 @Configuration
 @RequiredArgsConstructor
@@ -25,21 +23,15 @@ public class RestClientConfiguration {
 
     @Bean(name = "notificationRestClient")
     public RestClient notificationRestClient(RestClient.Builder builder) {
-        String authToken = getNotificationAuthToken();
-
         return builder.requestFactory(clientHttpRequestFactory())
             .defaultStatusHandler(new RestClientExceptionHandler())
+            .defaultHeaders(httpHeaders -> httpHeaders.setBasicAuth(
+                    notificationServiceProperties.getLogin(), notificationServiceProperties.getPassword()
+                )
+            )
             .baseUrl(notificationServiceProperties.getUrl())
-            .defaultHeader("Authorization", String.format("Basic %s", authToken))
             .build();
     }
-
-    private String getNotificationAuthToken() {
-        String authTokenRaw = String.format("%s:%s", notificationServiceProperties.getLogin(), notificationServiceProperties.getPassword());
-
-        return Base64.getEncoder().encodeToString(authTokenRaw.getBytes());
-    }
-
 
     @Bean(name = "gcpRestClient")
     public RestClient gcpRestClient(RestClient.Builder builder) {
