@@ -117,3 +117,7 @@ services:
     login: ${COURT_LOGIN}
     password: ${COURT_PASSWORD}
     webhookSecret: ${COURT_WEBHOOK_SECRET}
+
+scheduler:
+  token-refresh-rate: 3000000
+  token-refresh-init-delay: 500

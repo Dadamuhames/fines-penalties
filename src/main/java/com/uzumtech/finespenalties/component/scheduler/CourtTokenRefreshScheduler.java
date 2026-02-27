@@ -11,7 +11,10 @@ public class CourtTokenRefreshScheduler {
 
     private final CourtAuthService courtAuthService;
 
-    @Scheduled(fixedRate = 50 * 60 * 1000, initialDelay = 500)
+    @Scheduled(
+        fixedRateString = "${scheduler.token-refresh-rate}",
+        initialDelayString = "${scheduler.token-refresh-init-delay}"
+    )
     public void refreshTokens() {
 
         courtAuthService.refreshTokens();
