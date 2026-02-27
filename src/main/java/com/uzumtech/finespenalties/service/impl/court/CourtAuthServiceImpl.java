@@ -43,13 +43,13 @@ public class CourtAuthServiceImpl implements CourtAuthService {
 
         } else {
 
-            tokenResponse = getNewPair(refreshToken);
+            tokenResponse = getRefreshedPair(refreshToken);
         }
 
         return tokenResponse;
     }
 
-    private CourtTokenResponse getNewPair(String refreshToken) {
+    private CourtTokenResponse getRefreshedPair(String refreshToken) {
         CourtRefreshRequest request = new CourtRefreshRequest(refreshToken);
 
         return courtAdapter.sendRefreshRequest(request);
