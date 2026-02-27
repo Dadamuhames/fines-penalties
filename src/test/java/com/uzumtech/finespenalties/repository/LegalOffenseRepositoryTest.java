@@ -143,16 +143,6 @@ class LegalOffenseRepositoryTest {
     }
 
     @Test
-    void testCountByCreatedAt() {
-        repository.save(createOffense());
-        flushAndClear();
-
-        int count = repository.countByCreatedAt(LocalDate.now());
-
-        assertEquals(1, count);
-    }
-
-    @Test
     void testUpdateStatus_ShouldUpdateDbAndTimestamp() {
         LegalOffenseEntity offense = createOffense();
         offense.setStatus(OffenseStatus.NEW);

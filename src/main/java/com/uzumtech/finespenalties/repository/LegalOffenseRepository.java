@@ -24,9 +24,6 @@ public interface LegalOffenseRepository extends JpaRepository<LegalOffenseEntity
 
     Optional<LegalOffenseEntity> findByIdAndUserId(Long id, Long userId);
 
-    @Query("SELECT COUNT(o) FROM LegalOffenseEntity o WHERE DATE(o.createdAt) = ?1")
-    int countByCreatedAt(LocalDate dateTime);
-
     @Query("SELECT o FROM LegalOffenseEntity o " +
         "LEFT JOIN FETCH o.user " +
         "LEFT JOIN FETCH o.codeArticle " +
