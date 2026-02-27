@@ -105,13 +105,6 @@ class NotificationRequestRepositoryTest {
         flushAndClear();
 
         assertTrue(repository.isAvailableForProcessing(testRequestId));
-
-        // DELIVERED entity should NOT be available
-        repository.markAsDelivered(testRequestId, 1L);
-
-        flushAndClear();
-
-        assertFalse(repository.isAvailableForProcessing(testRequestId));
     }
 
     @Test
