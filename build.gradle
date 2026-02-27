@@ -68,9 +68,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-test-autoconfigure'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // Mock external APIs
-    testImplementation 'org.wiremock:wiremock:3.13.1'
-
     // Containers
     testImplementation platform("org.testcontainers:testcontainers-bom:1.19.8")
 
