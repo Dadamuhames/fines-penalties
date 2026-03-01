@@ -23,15 +23,15 @@ import java.time.OffsetDateTime;
 public class LegalOffenseEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inspector_id", updatable = false, foreignKey = @ForeignKey(name = "fk_inspector"), nullable = false)
+    @JoinColumn(name = "inspector_id", updatable = false, foreignKey = @ForeignKey(name = "fk_legal_offense_inspector"), nullable = false)
     private InspectorEntity inspector;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "code_article_id", foreignKey = @ForeignKey(name = "fk_codeArticle"), nullable = false)
+    @JoinColumn(name = "code_article_id", foreignKey = @ForeignKey(name = "fk_legal_offense_code_article"), nullable = false)
     private CodeArticleEntity codeArticle;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", updatable = false, foreignKey = @ForeignKey(name = "fk_user"), nullable = false)
+    @JoinColumn(name = "user_id", updatable = false, foreignKey = @ForeignKey(name = "fk_legal_offense_user"), nullable = false)
     private UserEntity user;
 
     @Column(nullable = false)
